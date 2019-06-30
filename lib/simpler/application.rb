@@ -28,6 +28,7 @@ module Simpler
 
     def call(env)
       route = @router.route_for(env)
+      return unknown_page unless route
       controller = route.controller.new(env)
       action = route.action
 
@@ -35,6 +36,10 @@ module Simpler
     end
 
     private
+
+    def unknown_page
+      Rack::Response.new(["Route doesn't exists"], 404, {"Content-Type" => "text/plain"})
+    end
 
     def require_app
       Dir["#{Simpler.root}/app/**/*.rb"].each { |file| require file }

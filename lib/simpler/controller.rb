@@ -22,6 +22,16 @@ module Simpler
       @response.finish
     end
 
+    protected
+
+    def set_status(status_code)
+      @response.status = status_code
+    end
+
+    def set_header(header, value)
+      response[header.to_s] = value
+    end
+
     private
 
     def extract_name
@@ -43,11 +53,16 @@ module Simpler
     end
 
     def params
-      @request.params
+      @request.params.merge!(@request.env["simpler.request_params"])
     end
 
     def render(template)
-      @request.env['simpler.template'] = template
+      if template.is_a?(Hash)
+        @request.env['simpler.response_type'] = template.keys.first
+        @request.env['simpler.response_data'] = template.values.first
+      else
+        @request.env['simpler.template'] = template
+      end
     end
 
   end
