@@ -8,4 +8,10 @@ class TestsController < Simpler::Controller
 
   end
 
+  def show
+    set_header('Custom-Header', "test")
+    set_status(201)
+    render plain: params[:id]
+  end
+
 end
